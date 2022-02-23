@@ -3,7 +3,7 @@
 
     <groupId>org.vaadin.addons.tatu</groupId>
     <artifactId>lumogridlayout</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <name>LumoGridLayout</name>
     <description>Integration of Lumo Grid utility classes for Vaadin platform</description>
 

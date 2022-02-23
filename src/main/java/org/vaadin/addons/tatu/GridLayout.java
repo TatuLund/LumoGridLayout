@@ -22,7 +22,7 @@ public class GridLayout extends Div {
      * Classes for defining the space between items in a flexbox or grid layout.
      */
     public enum Gap {
-        XSMALL("xs"), SMALL("s"), MEDIUM("m"), LARGE("l"), XLARGE("xl");
+        NONE(""), XSMALL("xs"), SMALL("s"), MEDIUM("m"), LARGE("l"), XLARGE("xl");
 
         private String gap;
 
@@ -138,7 +138,9 @@ public class GridLayout extends Div {
      */
     public void setGap(Gap gap) {
         cleanClasses("gap");
-        addClassName(gap.getGap());
+    	if (gap != Gap.NONE ) {
+            addClassName(gap.getGap());
+    	}
     }
 
     /**
@@ -151,7 +153,9 @@ public class GridLayout extends Div {
      */
     public void setGap(Gap gap, Orientation orientation) {
         cleanClasses("gap");
-        addClassName(gap.getGap(orientation));
+    	if (gap != Gap.NONE ) {
+            addClassName(gap.getGap(orientation));
+    	}
     }
 
     /**
@@ -168,15 +172,29 @@ public class GridLayout extends Div {
         setOrientationInternal(orientation, number);
     }
 
+    /**
+     * Get current orientation.
+     * 
+     * @return Orientation
+     */
+    public Orientation getOrientation() {
+        if (getClassNames().contains("grid-flow-col")) {
+            return Orientation.BY_ROWS;
+        }
+        return Orientation.BY_COLUMNS;
+    }
+
     private void setOrientationInternal(Orientation orientation, int number) {
         String className = null;
         if (orientation == Orientation.BY_COLUMNS) {
+        	removeClassName("grid-flow-col");
             if (number > 12) {
                 throw new IllegalArgumentException(
                         "Maximum 12 rows supported in GridLayout");
             }
             className = "grid-cols-";
         } else {
+        	addClassName("grid-flow-col");
             if (number > 6) {
                 throw new IllegalArgumentException(
                         "Maximum 6 rows supported in GridLayout");

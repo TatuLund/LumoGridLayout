@@ -44,23 +44,37 @@ public class View extends VerticalLayout implements AppShellConfigurator {
             	}
             });
         });
+        count.setMin(0);
         count.setValue(15);
 
+        IntegerField rowscols = new IntegerField("Rows/Cols");
+        rowscols.setValue(8);
+        rowscols.setHasControls(true);
+        rowscols.addValueChangeListener(event -> {
+          	gridLayout.setOrientation(gridLayout.getOrientation(), event.getValue());
+        });
+        rowscols.setMax(12);
+        rowscols.setMin(0);
+        
         Checkbox orientation = new Checkbox("By rows");
         orientation.addValueChangeListener(event -> {
-        	if (event.getValue()) {
-        		gridLayout.setOrientation(Orientation.BY_ROWS, 5);
-        	} else {
-        		gridLayout.setOrientation(Orientation.BY_COLUMNS, 8);
-        	}
+            if (event.getValue()) {
+                gridLayout.setOrientation(Orientation.BY_ROWS, 5);
+                rowscols.setMax(6);
+            } else {
+                gridLayout.setOrientation(Orientation.BY_COLUMNS, 8);
+                rowscols.setMax(12);
+            }
         });
+
         Select<Gap> gap = new Select();
         gap.setLabel("Gap");
         gap.setItems(Gap.values());
         gap.addValueChangeListener(event -> {
         	gridLayout.setGap(event.getValue());
         });
-        
+        gap.setValue(Gap.SMALL);
+
         Select<Align> align = new Select();
         align.setLabel("Align");
         align.setItems(Align.values());
@@ -81,7 +95,7 @@ public class View extends VerticalLayout implements AppShellConfigurator {
         });
         
         HorizontalLayout tools = new HorizontalLayout();
-        tools.add(count	, gap, justify, content, align);
+        tools.add(count	, rowscols, gap, justify, content, align);
         add(gridLayout, tools, orientation);
     }
 
