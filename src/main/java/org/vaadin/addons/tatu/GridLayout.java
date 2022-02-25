@@ -1,5 +1,6 @@
 package org.vaadin.addons.tatu;
 
+import java.util.Optional;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -9,8 +10,7 @@ import com.vaadin.flow.component.html.Div;
 /**
  * Java API of GridLayout based on Lumo Grid utility classes
  * 
- * Supports max 12 columns
- * Supports max 6 rows
+ * Supports max 12 columns Supports max 6 rows
  * 
  * @author Tatu Lund
  */
@@ -22,7 +22,8 @@ public class GridLayout extends Div {
      * Classes for defining the space between items in a flexbox or grid layout.
      */
     public enum Gap {
-        NONE(""), XSMALL("xs"), SMALL("s"), MEDIUM("m"), LARGE("l"), XLARGE("xl");
+        NONE(""), XSMALL("xs"), SMALL("s"), MEDIUM("m"), LARGE("l"), XLARGE(
+                "xl");
 
         private String gap;
 
@@ -138,9 +139,9 @@ public class GridLayout extends Div {
      */
     public void setGap(Gap gap) {
         cleanClasses("gap");
-    	if (gap != Gap.NONE ) {
+        if (gap != Gap.NONE) {
             addClassName(gap.getGap());
-    	}
+        }
     }
 
     /**
@@ -153,9 +154,9 @@ public class GridLayout extends Div {
      */
     public void setGap(Gap gap, Orientation orientation) {
         cleanClasses("gap");
-    	if (gap != Gap.NONE ) {
+        if (gap != Gap.NONE) {
             addClassName(gap.getGap(orientation));
-    	}
+        }
     }
 
     /**
@@ -187,14 +188,14 @@ public class GridLayout extends Div {
     private void setOrientationInternal(Orientation orientation, int number) {
         String className = null;
         if (orientation == Orientation.BY_COLUMNS) {
-        	removeClassName("grid-flow-col");
+            removeClassName("grid-flow-col");
             if (number > 12) {
                 throw new IllegalArgumentException(
                         "Maximum 12 rows supported in GridLayout");
             }
             className = "grid-cols-";
         } else {
-        	addClassName("grid-flow-col");
+            addClassName("grid-flow-col");
             if (number > 6) {
                 throw new IllegalArgumentException(
                         "Maximum 6 rows supported in GridLayout");
@@ -212,6 +213,13 @@ public class GridLayout extends Div {
         }
     }
 
+    private void cleanClasses(Component comp, String... prefixes) {
+        for (String prefix : prefixes) {
+            comp.getElement().getClassList()
+                    .removeIf(className -> className.startsWith(prefix));
+        }
+    }
+
     /**
      * Set colspan of the given child, overrides previous setting
      * 
@@ -221,13 +229,64 @@ public class GridLayout extends Div {
      *            Colspan of the child component
      */
     public void setColSpan(Component child, int colSpan) {
-        if (getChildren().filter(comp -> comp == child).findFirst()
-                .isPresent()) {
-            cleanClasses("col-span");
+        if ((colSpan < 1) || (colSpan > 12)) {
+            throw new IllegalArgumentException("colSpan needs to be 1 .. 12");
+        }
+        if (isChilld(child)) {
+            cleanClasses(child, "col-span");
             child.getElement().getClassList().add("col-span-" + colSpan);
         } else {
             throw new IllegalArgumentException(
                     "Given component is not immediate child of GridLayout");
+        }
+    }
+
+    private boolean isChilld(Component child) {
+        return getChildren().filter(comp -> comp == child).findFirst()
+                .isPresent();
+    }
+
+    /**
+     * Get the current col span of the child component.
+     * 
+     * @param child A child, must be immediate child of GridLayout.
+     * @return Currently set col span.
+     */
+    public int getColSpan(Component child) {
+        if (isChilld(child)) {
+            return getColOrRowSpan(child, "col-span");
+        } else {
+            throw new IllegalArgumentException(
+                    "Given component is not immediate child of GridLayout");
+        }
+    }
+
+    /**
+     * Get the current row span of the child component.
+     * 
+     * @param child A child, must be immediate child of GridLayout.
+     * @return Currently set row span.
+     */
+    public int getRowSpan(Component child) {
+        if (isChilld(child)) {
+            return getColOrRowSpan(child, "row-span");
+        } else {
+            throw new IllegalArgumentException(
+                    "Given component is not immediate child of GridLayout");
+        }
+    }
+
+    private int getColOrRowSpan(Component child, String prefix) {
+        Optional<String> colSpan = child.getElement().getClassList()
+                .stream()
+                .filter(className -> className.startsWith(prefix))
+                .findFirst();
+        if (colSpan.isPresent()) {
+            String cs = colSpan.get();
+            String[] parts = cs.split("-");
+            return Integer.valueOf(parts[2]);
+        } else {
+            return 1;
         }
     }
 
@@ -240,10 +299,14 @@ public class GridLayout extends Div {
      *            Rowspan of the child component
      */
     public void setRowSpan(Component child, int rowSpan) {
-        if (getChildren().filter(comp -> comp == child).findFirst()
-                .isPresent()) {
-            cleanClasses("row-span");
-            child.getElement().getClassList().add("row-span-" + rowSpan);
+        if ((rowSpan < 1) || (rowSpan > 6)) {
+            throw new IllegalArgumentException("colSpan needs to be 1 .. 6");
+        }
+        if (isChilld(child)) {
+            cleanClasses(child, "row-span");
+            if (rowSpan > 1) {
+                child.getElement().getClassList().add("row-span-" + rowSpan);
+            }
         } else {
             throw new IllegalArgumentException(
                     "Given component is not immediate child of GridLayout");
@@ -254,7 +317,8 @@ public class GridLayout extends Div {
      * Set mode of aligning items along a flexbox’s cross axis or a grid’s block
      * axis.
      * 
-     * @param align The Align mode class
+     * @param align
+     *            The Align mode class
      */
     public void setAlign(Align align) {
         cleanClasses("items");
@@ -265,7 +329,8 @@ public class GridLayout extends Div {
      * Set mode of aligning items along a flexbox’s main axis or a grid’s inline
      * axis
      * 
-     * @param justify The Justify mode class
+     * @param justify
+     *            The Justify mode class
      */
     public void setJustify(Justify justify) {
         cleanClasses("justify");
@@ -276,7 +341,8 @@ public class GridLayout extends Div {
      * Set mode of distributing space around and between items along a grid’s
      * block axis.
      * 
-     * @param content The Content mode class
+     * @param content
+     *            The Content mode class
      */
     public void setContent(Content content) {
         cleanClasses("content");
