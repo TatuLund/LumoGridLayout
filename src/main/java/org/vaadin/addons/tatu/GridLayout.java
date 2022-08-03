@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.html.Div;
 
@@ -14,8 +15,9 @@ import com.vaadin.flow.component.html.Div;
  * 
  * @author Tatu Lund
  */
-@CssImport("./grid-layout-styles.css")
-@NpmPackage(value = "lumo-css-framework", version = "^4.0.10")
+@NpmPackage(value = "@vaadin/vaadin-lumo-styles", version = "23.2.0-alpha2")
+@JsModule("@vaadin/vaadin-lumo-styles/utility.js")
+@JsModule("./lumo-utility.ts")
 public class GridLayout extends Div {
 
     /**
