@@ -1,3 +1,6 @@
+[![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/lumogridlayout)
+[![Stars on Vaadin Directory](https://img.shields.io/vaadin-directory/star/lumogridlayout.svg)](https://vaadin.com/directory/component/lumogridlayout)
+
 # LumoGridLayout
 
 Java API for Vaadin's Lumo Grid utility classes
