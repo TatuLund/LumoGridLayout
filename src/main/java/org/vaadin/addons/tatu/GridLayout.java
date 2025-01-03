@@ -15,7 +15,6 @@ import com.vaadin.flow.component.html.Div;
  * 
  * @author Tatu Lund
  */
-@NpmPackage(value = "@vaadin/vaadin-lumo-styles", version = "23.2.0-alpha2")
 @JsModule("@vaadin/vaadin-lumo-styles/utility.js")
 @JsModule("./lumo-utility.ts")
 public class GridLayout extends Div {
